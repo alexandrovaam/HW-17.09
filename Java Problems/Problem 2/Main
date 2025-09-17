@@ -1,0 +1,37 @@
+public class Main {
+    public static void main(String[] args) {
+        WordDistanceFinder finder = new WordDistanceFinder();
+
+        String[] S1 = {"the", "quick", "brown", "fox", "quick"};
+        System.out.println(finder.getMinDistance(S1, "the", "fox"));
+
+        String[] S2 = {"apple", "for", "apple", "contribute", "practice"};
+        System.out.println(finder.getMinDistance(S2, "apple", "practice"));
+    }
+}
+class WordDistanceFinder {
+    public int getMinDistance(String[] words, String word1, String word2) {
+        int minDistance = Integer.MAX_VALUE;
+        int lastPosWord1 = -1;
+        int lastPosWord2 = -1;
+
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].equals(word1)) {
+                lastPosWord1 = i;
+                if (lastPosWord2 != -1) {
+                    minDistance = Math.min(minDistance, Math.abs(lastPosWord1 - lastPosWord2));
+                }
+            } else if (words[i].equals(word2)) {
+                lastPosWord2 = i;
+                if (lastPosWord1 != -1) {
+                    minDistance = Math.min(minDistance, Math.abs(lastPosWord1 - lastPosWord2));
+                }
+            }
+        }
+        if (minDistance == Integer.MAX_VALUE) {
+            return -1;
+        } else {
+            return minDistance;
+        }
+    }
+}
