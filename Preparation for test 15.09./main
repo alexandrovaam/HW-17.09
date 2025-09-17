@@ -1,0 +1,89 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        StudentWork sw = new StudentWork();
+        sw.ReadPoints();
+
+        System.out.println("valid works - " + sw.getValidCount());
+
+        double[] minDiffs = sw.MinDpoints();
+        System.out.print("minimal difference - ");
+        for (int i = 0; i < minDiffs.length; i++) {
+            System.out.printf("%.3f", minDiffs[i]);
+            if (i < minDiffs.length - 1) System.out.print(", ");
+        }
+        System.out.println();
+
+        List<Integer> laureates = sw.Laureates();
+        System.out.print("laureates - ");
+        for (int i = 0; i < laureates.size(); i++) {
+            System.out.print(laureates.get(i));
+            if (i < laureates.size() - 1) System.out.print(", ");
+        }
+        System.out.println();
+    }
+}
+
+class StudentWork {
+    int n;
+    double[] points;
+    List<Double> validPoints = new ArrayList<>();
+
+    public StudentWork() {
+        Scanner scan = new Scanner(System.in);
+
+        do {
+            n = scan.nextInt();
+        } while (n < 3 || n > 10000);
+
+        points = new double[n];
+        for (int i = 0; i < n; i++) {
+            double p = scan.nextDouble();
+            if (p < -100 || p > 100) {
+                i--;
+            } else {
+                points[i] = p;
+            }
+        }
+    }
+    void ReadPoints() {
+        validPoints.clear();
+        for (double p : points) {
+            if (p > 0) {
+                validPoints.add(p);
+            }
+        }
+    }
+
+    double[] MinDpoints() {
+        Set<Double> distinctSet = new TreeSet<>(validPoints);
+        Double[] distinct = distinctSet.toArray(new Double[0]);
+
+        double[] diffs = new double[distinct.length - 1];
+        for (int i = 0; i < distinct.length - 1; i++) {
+            diffs[i] = distinct[i + 1] - distinct[i];
+        }
+
+        return diffs;
+    }
+
+    // Returns the list of indices of students with points >= 3 highest
+    List<Integer> Laureates() {
+        List<Double> sorted = new ArrayList<>(validPoints);
+        sorted.sort(Collections.reverseOrder());
+        double thirdHighest = sorted.get(2);
+
+        List<Integer> laureates = new ArrayList<>();
+        for (int i = 0; i < points.length; i++) {
+            if (points[i] >= thirdHighest) {
+                laureates.add(i + 1);
+            }
+        }
+        return laureates;
+    }
+
+    int getValidCount() {
+        return validPoints.size();
+    }
+}
