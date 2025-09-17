@@ -1,0 +1,168 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        List<ClubMember> members = new ArrayList<>();
+
+        try (Scanner sc = new Scanner(new File("C:\\Users\\anna\\Documents\\input.txt"))) {
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
+                try {
+                    String[] parts = line.split(",");
+                    String type = parts[0].trim();
+
+                    switch (type) {
+                        case "Director" -> members.add(new Director(
+                                parts[1].trim(),
+                                parts[2].trim(),
+                                Integer.parseInt(parts[3].trim()),
+                                Double.parseDouble(parts[4].trim()),
+                                parts[5].trim()
+                        ));
+                        case "Coach" -> members.add(new Coach(
+                                parts[1].trim(),
+                                parts[2].trim(),
+                                Integer.parseInt(parts[3].trim()),
+                                Double.parseDouble(parts[4].trim()),
+                                parts[5].trim(),
+                                Integer.parseInt(parts[6].trim())
+                        ));
+                        case "FootballPlayer" -> members.add(new FootballPlayer(
+                                parts[1].trim(),
+                                parts[2].trim(),
+                                Integer.parseInt(parts[3].trim()),
+                                Double.parseDouble(parts[4].trim()),
+                                parts[5].trim(),
+                                Integer.parseInt(parts[6].trim()),
+                                Integer.parseInt(parts[7].trim()),
+                                Integer.parseInt(parts[8].trim()),
+                                Integer.parseInt(parts[9].trim())
+                        ));
+                        default -> System.out.println("Unknown member type: " + type);
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error reading line: " + line);
+                    System.out.println(e.getMessage());
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: input.txt");
+            return;
+        }
+
+        members.sort(Comparator.comparingInt(m -> m.age));
+
+        for (ClubMember m : members) {
+            m.info();
+            System.out.println("*".repeat(20));
+        }
+
+        ClubMember highestSalary = Collections.max(members, Comparator.comparingDouble(m -> m.salary));
+        FootballPlayer topScorer = members.stream()
+                .filter(m -> m instanceof FootballPlayer)
+                .map(m -> (FootballPlayer) m)
+                .max(Comparator.comparingInt(p -> p.goals))
+                .orElse(null);
+
+        System.out.println("The person with the highest salary in the club is");
+        System.out.println(highestSalary.firstName + " " + highestSalary.lastName);
+        System.out.println("with " + String.format("%.2f", highestSalary.salary) + " lv salary.");
+
+        if (topScorer != null) {
+            System.out.println("The team's top scorer is");
+            System.out.println(topScorer.firstName + " " + topScorer.lastName);
+            System.out.println("with " + topScorer.goals + " goals.");
+        }
+
+
+    }
+}
+
+abstract class ClubMember {
+    protected String firstName;
+    protected String lastName;
+    protected int age;
+    protected double salary;
+
+    public ClubMember(String firstName, String lastName, int age, double salary) {
+        if (firstName == null || firstName.isEmpty())
+            throw new IllegalArgumentException("The name can't be an empty string!");
+        if (lastName == null || lastName.isEmpty())
+            throw new IllegalArgumentException("The name can't be an empty string!");
+        if (age <= 17)
+            throw new IllegalArgumentException("Age must be greater than 17 years!");
+        if (salary <= 0)
+            throw new IllegalArgumentException("Salary must be a positive number!");
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.salary = salary;
+    }
+
+    public abstract void info();
+}
+
+class Director extends ClubMember {
+    private String directorType;
+
+    public Director(String firstName, String lastName, int age, double salary, String directorType) {
+        super(firstName, lastName, age, salary);
+        if (!Set.of("executive", "technical", "sports").contains(directorType))
+            throw new IllegalArgumentException("Director type must be executive/sports/technical");
+        this.directorType = directorType;
+    }
+
+    public void info() {
+        System.out.println(directorType + " director: " + firstName + " " + lastName);
+        System.out.println("salary:"+ salary+"lv");
+        System.out.println("age: " + age + " years");
+    }
+}
+
+class Coach extends ClubMember {
+    private String coachType;
+    private int contractLength;
+
+    public Coach(String firstName, String lastName, int age, double salary, String coachType, int contractLength) {
+        super(firstName, lastName, age, salary);
+        if (!Set.of("head", "assistant", "goal keeper").contains(coachType))
+            throw new IllegalArgumentException("Coach type must be head/assistant/goal keeper");
+        this.coachType = coachType;
+        this.contractLength = contractLength;
+    }
+
+    public void info() {
+        System.out.println(coachType + " coach: " + firstName + " " + lastName);
+        System.out.println("salary:"+ salary+"lv");
+        System.out.println("age: " + age + " years");
+    }
+}
+
+class FootballPlayer extends ClubMember {
+    String position;
+    int contractLength;
+    int matches;
+    int goals;
+    int assist;
+
+    public FootballPlayer(String firstName, String lastName, int age, double salary,
+                          String position, int contractLength, int matches, int goals, int assist) {
+        super(firstName, lastName, age, salary);
+        if (!Set.of("forward", "midfielder", "defender", "goalkeeper").contains(position))
+            throw new IllegalArgumentException("Invalid player position");
+        this.position = position;
+        this.contractLength = contractLength;
+        this.matches = matches;
+        this.goals = goals;
+        this.assist = assist;
+    }
+
+    public void info() {
+        System.out.println(firstName + " " + lastName + " - " + position);
+        System.out.println("salary: " + String.format("%.2f", salary) + " lv");
+        System.out.println("age: " + age + " years");
+        System.out.println(goals + " goals and " + assist + " assists in " + matches + " matches");
+    }
+}
