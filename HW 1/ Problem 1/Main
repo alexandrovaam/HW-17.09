@@ -1,0 +1,62 @@
+public class Main {
+    public static void main(String[] args) {
+        Administrator admin = new Administrator("admin01", "12345", "Alice", "alice@example.com");
+
+        if (admin.verifyLogin("admin01", "12345")) {
+            System.out.println("Login successful! Status: " + admin.getLoginStatus());
+            admin.updateCatalog();
+        } else {
+            System.out.println("Login failed. Status: " + admin.getLoginStatus());
+        }
+    }
+}
+
+class User {
+    private String userId;
+    private String password;
+    private String loginStatus;
+
+    public User(String userId, String password) {
+        this.userId = userId;
+        this.password = password;
+        this.loginStatus = "Logged Out";
+    }
+
+    public boolean verifyLogin(String inputUserId, String inputPassword) {
+        if (this.userId.equals(inputUserId) && this.password.equals(inputPassword)) {
+            loginStatus = "Logged In";
+            return true;
+        } else {
+            loginStatus = "Login Failed";
+            return false;
+        }
+    }
+
+    public String getLoginStatus() {
+        return loginStatus;
+    }
+}
+class Administrator extends User {
+    private String adminName;
+    private String email;
+
+    public Administrator(String userId, String password, String adminName, String email) {
+        super(userId, password);
+        this.adminName = adminName;
+        this.email = email;
+    }
+
+    public boolean updateCatalog() {
+        System.out.println("Catalog updated by admin: " + adminName);
+        return true;
+    }
+
+    public String getAdminName() {
+        return adminName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+}
+
