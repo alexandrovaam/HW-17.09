@@ -1,0 +1,127 @@
+abstract class HospitalStaff {
+    private String firstName;
+    private String lastName;
+    private int age;
+    private double salary;
+
+    public HospitalStaff(String firstName, String lastName, int age, double salary) {
+        if (age <= 0) {
+            throw new IllegalArgumentException("Age must be a positive number.");
+        }
+        if (salary <= 0) {
+            throw new IllegalArgumentException("Salary must be a positive number!");
+        }
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.salary = salary;
+    }
+
+    public abstract void info();
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+}
+
+class Doctor extends HospitalStaff {
+    private String specialization;
+    private int patientsTreated;
+
+    public Doctor(String firstName, String lastName, int age, double salary,
+                  String specialization, int patientsTreated) {
+        super(firstName, lastName, age, salary);
+        this.specialization = specialization;
+        this.patientsTreated = patientsTreated;
+    }
+
+    @Override
+    public void info() {
+        System.out.println("Doctor: " + getFullName() +
+                ", Age: " + getAge() +
+                ", Salary: " + getSalary() +
+                ", Specialization: " + specialization +
+                ", Patients Treated: " + patientsTreated);
+    }
+}
+
+class Nurse extends HospitalStaff {
+    private String department;
+    private int shiftsWorked;
+
+    public Nurse(String firstName, String lastName, int age, double salary,
+                 String department, int shiftsWorked) {
+        super(firstName, lastName, age, salary);
+        this.department = department;
+        this.shiftsWorked = shiftsWorked;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public int getShiftsWorked() {
+        return shiftsWorked;
+    }
+
+    @Override
+    public void info() {
+        System.out.println("Nurse: " + getFullName() +
+                ", Age: " + getAge() +
+                ", Salary: " + getSalary() +
+                ", Department: " + department +
+                ", Shifts Worked: " + shiftsWorked);
+    }
+}
+
+class Janitor extends HospitalStaff {
+    private String area;
+    private boolean nightShift;
+    private String areaCovered;
+
+    public Janitor(String firstName, String lastName, int age, double salary,
+                   String area, boolean nightShift, String areaCovered) {
+        super(firstName, lastName, age, salary);
+        this.area = area;
+        this.nightShift = nightShift;
+        this.areaCovered = areaCovered;
+    }
+
+    public String getAreaCovered() {
+        return areaCovered;
+    }
+
+    @Override
+    public void info() {
+        System.out.println("Janitor: " + getFullName() +
+                ", Age: " + getAge() +
+                ", Salary: " + getSalary() +
+                ", Area: " + area +
+                ", Area Covered: " + areaCovered +
+                ", Night Shift: " + (nightShift ? "Yes" : "No"));
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        HospitalStaff d1 = new Doctor("John", "Smith", 45, 5000, "Cardiology", 1200);
+        HospitalStaff n1 = new Nurse("Alice", "Brown", 32, 3000, "Emergency", 15);
+        HospitalStaff j1 = new Janitor("Mike", "Davis", 50, 1800, "ICU", true, "Whole Building");
+
+        d1.info();
+        n1.info();
+        j1.info();
+
+        System.out.println("Nurse Department: " + ((Nurse) n1).getDepartment());
+        System.out.println("Nurse Shifts Worked: " + ((Nurse) n1).getShiftsWorked());
+        System.out.println("Janitor Area Covered: " + ((Janitor) j1).getAreaCovered());
+    }
+}
