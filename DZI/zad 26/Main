@@ -1,0 +1,50 @@
+import java.util.*;
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int N = Integer.parseInt(scanner.nextLine());
+        List<Integer> numbers = new ArrayList<>();
+
+        for (int i = 0; i < N; i++) {
+            numbers.add(Integer.parseInt(scanner.nextLine()));
+        }
+
+        MaxElementFinder finder = new MaxElementFinder(numbers);
+        int maxA = finder.findMaxA();
+        System.out.println("Max Element = " + maxA);
+
+        MaxDigitBuilder digitBuilder = new MaxDigitBuilder(maxA);
+        int maxDigit = digitBuilder.buildMaxDigit();
+        System.out.println("Max Digit = " + maxDigit);
+
+        System.out.println("next Max Digit = " + (maxDigit + 1));
+    }
+}
+
+class MaxElementFinder {
+    private final List<Integer> numbers;
+
+    public MaxElementFinder(List<Integer> numbers) {
+        this.numbers = numbers;
+    }
+
+    public int findMaxA() {
+        int max = Collections.max(numbers);
+        return max + 1;
+    }
+}
+
+class MaxDigitBuilder {
+    private final int number;
+
+    public MaxDigitBuilder(int number) {
+        this.number = number;
+    }
+
+    public int buildMaxDigit() {
+        char[] digits = String.valueOf(number).toCharArray();
+        Arrays.sort(digits);
+        StringBuilder sb = new StringBuilder(new String(digits)).reverse();
+        return Integer.parseInt(sb.toString());
+    }
+}
